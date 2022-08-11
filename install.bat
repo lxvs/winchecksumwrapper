@@ -1,4 +1,4 @@
-@mode con cols=80 lines=31
+@mode con cols=80 lines=32
 @echo off
 setlocal enableExtensions disableDelayedExpansion
 pushd "%~dp0"
@@ -11,7 +11,7 @@ call:checkinstallation
 :welcome
 call:refreshopts
 call:welcomescreen
-choice /c 1234567890UFQWERS /n /m ">       Choose what to do: "
+choice /c 1234567890UFQWERSAD /n /m ">       Choose what to do: "
 set choice=%ERRORLEVEL%
 if %choice% EQU 0 (
     set _exit=1
@@ -29,6 +29,14 @@ if %choice% EQU 1 (
 )
 if %choice% EQU 2 (
     call:uninstall
+    goto end
+)
+if %choice% EQU 18 (
+    call:addtopath
+    goto end
+)
+if %choice% EQU 19 (
+    call:removefrompath
     goto end
 )
 if %choice% EQU 3 (
@@ -95,8 +103,9 @@ goto welcome
 
 :setmetainfo
 set "_title=Winchecksum Wrapper"
-set "_path_to_winchecksum=winchecksum\winchecksum.bat"
-set "_winchecksum=%~dp0%_path_to_winchecksum%"
+set "_winchecksum_relative=winchecksum\winchecksum.bat"
+set "_winchecksum=%~dp0%_winchecksum_relative%"
+set "_winchecksum_dir=%~dp0winchecksum"
 set "_icon=%SystemRoot%\System32\SHELL32.dll,-23"
 set "_link=https://github.com/lxvs/winchecksumwrapper"
 exit /b
@@ -104,7 +113,7 @@ exit /b
 
 :validatewinchecksum
 if exist "%_winchecksum%" (exit /b 0)
-call:err --before-welcome "error: failed to find file `%_path_to_winchecksum%'"
+call:err --before-welcome "error: failed to find file `%_winchecksum_relative%'"
 exit /b 1
 ::validatewinchecksum
 
@@ -116,6 +125,7 @@ set _exit=
 set ec=0
 set "allalgorithms=MD2 MD4 MD5 SHA1 SHA256 SHA384 SHA512"
 set installing=
+set addingtopath=
 exit /b
 ::init
 
@@ -136,6 +146,7 @@ exit /b
 ::setdefaultopts
 
 :checkinstallation
+call:getreg "%regpath%" "addedtopath" addedtopath
 call:getreg "%regpath%" "path" installation
 if not defined installation (exit /b)
 call:getreg "%regpath%" "uppercasemode" umode
@@ -147,6 +158,7 @@ exit /b
 
 :refreshopts
 if defined installation (set _installed=yes) else (set _installed=no)
+if defined addedtopath (set "_installed=%_installed% (added to Path)") else (set "_installed=%_installed% (not in Path)")
 if defined algorithms (for %%i in (%algorithms%) do (set %%i=1))
 if defined md2 (set _md2=yes) else (set _md2=no)
 if defined md4 (set _md4=yes) else (set _md4=no)
@@ -206,6 +218,8 @@ cls
 @echo         Operations:
 @echo                 [1] Install
 @echo                 [2] Uninstall
+@echo                 [A] Add winchecksum to Path
+@echo                 [D] Remove winchecksum from Path
 @echo                 [0] Exit
 @echo;
 @echo         Algorithms:
@@ -289,6 +303,43 @@ if defined installing (exit /b)
 call:say "Uninstall complete"
 exit /b 0
 ::uninstall
+
+:addtopath
+set addingtopath=1
+call:removefrompath || goto end
+call:getreg "HKCU\Environment" "Path" userpath
+if defined userpath (
+    setx Path "%_winchecksum_dir%;%userpath%" 1>nul || exit /b 1
+    reg add "%regpath%" /v "addedtopath" /d "1" /f 1>nul 2>&1
+    reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\App Paths\winchecksum.exe" /ve /d "%_winchecksum%" /f 1>nul 2>&1
+) else (
+    call:err "error: failed to get user Path"
+    exit /b 1
+)
+call:say "Added winchecksum to Path"
+exit /b 0
+::addtopath
+
+:removefrompath
+reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\winchecksum.exe" /f 1>nul 2>&1
+call:getreg "HKCU\Environment" "Path" userpath
+setlocal EnableDelayedExpansion
+if defined userpath (
+    if defined _winchecksum_dir (
+        setx Path "!userpath:%_winchecksum_dir%;=!" 1>nul || exit /b 1
+        reg delete "%regpath%" /v "addedtopath" /f 1>nul 2>&1
+    ) else (
+        call:err "error: `_winchecksum_dir' not defined"
+        exit /b 1
+    )
+) else (
+    call:err "error: failed to get user Path"
+    exit /b 1
+)
+if not defined addingtopath (call:say "Removed winchecksum from Path")
+endlocal
+exit /b 0
+::removefrompath
 
 :getreg
 set "getreg_path=%~1"
