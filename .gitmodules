@@ -1,0 +1,4 @@
+[submodule "winchecksum"]
+	path = winchecksum
+	url = https://github.com/lxvs/winchecksum.git
+	branch = rel
