@@ -3,6 +3,7 @@
 setlocal enableExtensions disableDelayedExpansion
 pushd "%~dp0"
 call:setmetainfo
+call:validatewinchecksum || goto end
 call:init
 call:setdefaultopts
 call:checkinstallation
@@ -94,11 +95,18 @@ goto welcome
 
 :setmetainfo
 set "_title=Winchecksum Wrapper"
-set "_winchecksum=%~dp0winchecksum\winchecksum.bat"
+set "_path_to_winchecksum=winchecksum\winchecksum.bat"
+set "_winchecksum=%~dp0%_path_to_winchecksum%"
 set "_icon=%SystemRoot%\System32\SHELL32.dll,-23"
 set "_link=https://github.com/lxvs/winchecksumwrapper"
 exit /b
 ::setmetainfo
+
+:validatewinchecksum
+if exist "%_winchecksum%" (exit /b 0)
+call:err --before-welcome "error: failed to find file `%_path_to_winchecksum%'"
+exit /b 1
+::validatewinchecksum
 
 :init
 title %_title%
@@ -329,8 +337,13 @@ goto say_loop
 ::say
 
 :err
-call:welcomescreen
 set ec=1
+if "%~1" == "--before-welcome" (
+    echo;
+    shift /1
+) else (
+    call:welcomescreen
+)
 :err_loop
 if "%~1" == "" (
     if %1. == . (exit /b)
