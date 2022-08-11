@@ -146,7 +146,6 @@ exit /b
 ::setdefaultopts
 
 :checkinstallation
-call:getreg "%regpath%" "addedtopath" addedtopath
 call:getreg "%regpath%" "path" installation
 if not defined installation (exit /b)
 call:getreg "%regpath%" "uppercasemode" umode
@@ -158,7 +157,6 @@ exit /b
 
 :refreshopts
 if defined installation (set _installed=yes) else (set _installed=no)
-if defined addedtopath (set "_installed=%_installed% (added to Path)") else (set "_installed=%_installed% (not in Path)")
 if defined algorithms (for %%i in (%algorithms%) do (set %%i=1))
 if defined md2 (set _md2=yes) else (set _md2=no)
 if defined md4 (set _md4=yes) else (set _md4=no)
@@ -310,7 +308,6 @@ call:removefrompath || goto end
 call:getreg "HKCU\Environment" "Path" userpath
 if defined userpath (
     setx Path "%_winchecksum_dir%;%userpath%" 1>nul || exit /b 1
-    reg add "%regpath%" /v "addedtopath" /d "1" /f 1>nul 2>&1
     reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\App Paths\winchecksum.exe" /ve /d "%_winchecksum%" /f 1>nul 2>&1
 ) else (
     call:err "error: failed to get user Path"
@@ -327,7 +324,6 @@ setlocal EnableDelayedExpansion
 if defined userpath (
     if defined _winchecksum_dir (
         setx Path "!userpath:%_winchecksum_dir%;=!" 1>nul || exit /b 1
-        reg delete "%regpath%" /v "addedtopath" /f 1>nul 2>&1
     ) else (
         call:err "error: `_winchecksum_dir' not defined"
         exit /b 1
