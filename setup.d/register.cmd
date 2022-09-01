@@ -1,4 +1,5 @@
 @if not defined _gpss_name (exit /b)
+if defined _gpss_noreg (exit /b)
 call unregister.cmd 1>nul 2>&1
 call getreg.cmd "HKCU\Environment" "Path" UserPath
 if defined UserPath (

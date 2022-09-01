@@ -1,4 +1,5 @@
 @if not defined _gpss_name (exit /b)
+if defined _gpss_noreg (exit /b)
 call getreg.cmd "HKCU\Environment" "Path" UserPath
 setlocal EnableDelayedExpansion
 if defined UserPath (
