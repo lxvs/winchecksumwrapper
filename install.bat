@@ -157,7 +157,7 @@ exit /b
 
 :refreshopts
 if defined installation (set _installed=yes) else (set _installed=no)
-if defined algorithms (for %%i in (%algorithms%) do (set %%i=1))
+if defined algorithms (for %%i in (%algorithms%) do (set %%i=1) & set algorithms=)
 if defined md2 (set _md2=yes) else (set _md2=no)
 if defined md4 (set _md4=yes) else (set _md4=no)
 if defined md5 (set _md5=yes) else (set _md5=no)
