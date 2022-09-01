@@ -10,7 +10,7 @@ call:checkinstallation
 :welcome
 call:refreshopts
 call:welcomescreen
-choice /c 1234567890UFQWERSAD /n /m ">       Choose what to do: "
+choice /c 1234567890UFQWERS /n /m ">       Choose what to do: "
 set choice=%ERRORLEVEL%
 if %choice% EQU 0 (
     set _exit=1
@@ -28,14 +28,6 @@ if %choice% EQU 1 (
 )
 if %choice% EQU 2 (
     call:uninstall
-    goto end
-)
-if %choice% EQU 18 (
-    call:addtopath
-    goto end
-)
-if %choice% EQU 19 (
-    call:removefrompath
     goto end
 )
 if %choice% EQU 3 (
@@ -215,8 +207,6 @@ cls
 @echo         Operations:
 @echo                 [1] Install
 @echo                 [2] Uninstall
-@echo                 [A] Add winchecksum to Path
-@echo                 [D] Remove winchecksum from Path
 @echo                 [0] Exit
 @echo;
 @echo         Algorithms:
@@ -300,41 +290,6 @@ if defined installing (exit /b)
 call:say "Uninstall complete"
 exit /b 0
 ::uninstall
-
-:addtopath
-set addingtopath=1
-call:removefrompath || goto end
-call:getreg "HKCU\Environment" "Path" userpath
-if defined userpath (
-    setx Path "%_winchecksum_dir%;%userpath%" 1>nul || exit /b 1
-    reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\App Paths\winchecksum.exe" /ve /d "%_winchecksum%" /f 1>nul 2>&1
-) else (
-    call:err "error: failed to get user Path"
-    exit /b 1
-)
-call:say "Added winchecksum to Path"
-exit /b 0
-::addtopath
-
-:removefrompath
-reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\winchecksum.exe" /f 1>nul 2>&1
-call:getreg "HKCU\Environment" "Path" userpath
-setlocal EnableDelayedExpansion
-if defined userpath (
-    if defined _winchecksum_dir (
-        setx Path "!userpath:%_winchecksum_dir%;=!" 1>nul || exit /b 1
-    ) else (
-        call:err "error: `_winchecksum_dir' not defined"
-        exit /b 1
-    )
-) else (
-    call:err "error: failed to get user Path"
-    exit /b 1
-)
-if not defined addingtopath (call:say "Removed winchecksum from Path")
-endlocal
-exit /b 0
-::removefrompath
 
 :getreg
 set "getreg_path=%~1"
