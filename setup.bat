@@ -50,17 +50,18 @@ if not defined silent (echo Uninstall complete.)
 goto end
 
 :installed
-choice /c iuq /n /m "%_gpss_name% was already installed; would you like to: (I)nstall again, (U)ninstall, or (Q)uit?"
+choice /c oiuq /n /m "%_gpss_name% was already installed; would you like to: (O)verwrite, (I)nstall again cleanly, (U)ninstall, or (Q)uit?"
 if %ERRORLEVEL% EQU 0 ((set _exit=1) & (goto end))
-if %ERRORLEVEL% EQU 1 (call "%~dpnx0" --silent --uninstall & goto install)
-if %ERRORLEVEL% EQU 2 (goto uninstall)
-if %ERRORLEVEL% EQU 3 ((set _exit=1) & (goto end))
+if %ERRORLEVEL% EQU 1 (goto install)
+if %ERRORLEVEL% EQU 2 (call "%~dpnx0" --silent --uninstall & goto install)
+if %ERRORLEVEL% EQU 3 (goto uninstall)
+if %ERRORLEVEL% EQU 4 ((set _exit=1) & (goto end))
 goto end
 
 :installfiles
 if not exist f.manifest ((>&2 echo error: unable to find file `f.manifest') & (exit /b 1))
 if not exist "%_gpss_target_dir%" (mkdir "%_gpss_target_dir%" || ((set ec=%errorlevel%) & (goto end)))
-if exist d.manifest (for /f "delims=" %%a in (d.manifest) do (mkdir "%_gpss_target_dir%\%%~a" || exit /b))
+if exist d.manifest (for /f "delims=" %%a in (d.manifest) do (if not exist "%_gpss_target_dir%\%%~a" (mkdir "%_gpss_target_dir%\%%~a" || exit /b)))
 for /f "delims=" %%a in (f.manifest) do (copy /b /y "..\%%~a" "%_gpss_target_dir%\%%~a" 1>nul)
 exit /b 0
 
