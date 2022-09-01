@@ -1,4 +1,4 @@
-set name=winchecksum
-set exec=winchecksum.bat
-set target_dir=%LOCALAPPDATA%\Programs\%name%
-set path_dir=%target_dir%\%name%
+set _gpss_name=winchecksum
+set _gpss_exec=winchecksum.bat
+set _gpss_target_dir=%LOCALAPPDATA%\Programs\%_gpss_name%
+set _gpss_path_dir=%_gpss_target_dir%\%_gpss_name%

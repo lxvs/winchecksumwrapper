@@ -1,17 +1,17 @@
-@if not defined name (exit /b)
+@if not defined _gpss_name (exit /b)
 call getreg.cmd "HKCU\Environment" "Path" UserPath
 setlocal EnableDelayedExpansion
 if defined UserPath (
     if not defined silent (
-        if defined path_dir (
-            setx Path "!UserPath:%path_dir%;=!" 1>nul
+        if defined _gpss_path_dir (
+            setx Path "!UserPath:%_gpss_path_dir%;=!" 1>nul
         ) else (
             >&2 echo warning: no installation found; try to uninstall anyway
         )
-        reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%name%.exe" /f 1>nul
+        reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%_gpss_name%.exe" /f 1>nul
     ) else (
-        if defined path_dir (setx Path "!UserPath:%path_dir%;=!" 1>nul 2>&1)
-        reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%name%.exe" /f 1>nul 2>&1
+        if defined _gpss_path_dir (setx Path "!UserPath:%_gpss_path_dir%;=!" 1>nul 2>&1)
+        reg delete "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\%_gpss_name%.exe" /f 1>nul 2>&1
     )
 ) else (
     if not defined silent (

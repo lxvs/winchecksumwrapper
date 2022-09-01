@@ -6,7 +6,7 @@ set silent=
 set uninstall=
 set _exit=
 set ec=0
-title %name% setup
+title %_gpss_name% setup
 
 :parseargs
 if %1. == . (goto endparseargs)
@@ -29,7 +29,7 @@ goto end
 :endparseargs
 
 if defined uninstall (goto uninstall)
-if not defined silent (if exist "%path_dir%\%exec%" (goto installed))
+if not defined silent (if exist "%_gpss_path_dir%\%_gpss_exec%" (goto installed))
 
 :install
 if exist install.pre.cmd (call install.pre.cmd)
@@ -50,7 +50,7 @@ if not defined silent (echo Uninstall complete.)
 goto end
 
 :installed
-choice /c iuq /n /m "%name% was already installed; would you like to: (I)nstall again, (U)ninstall, or (Q)uit?"
+choice /c iuq /n /m "%_gpss_name% was already installed; would you like to: (I)nstall again, (U)ninstall, or (Q)uit?"
 if %ERRORLEVEL% EQU 0 ((set _exit=1) & (goto end))
 if %ERRORLEVEL% EQU 1 (call "%~dpnx0" --silent --uninstall & goto install)
 if %ERRORLEVEL% EQU 2 (goto uninstall)
@@ -59,16 +59,16 @@ goto end
 
 :installfiles
 if not exist f.manifest ((>&2 echo error: unable to find file `f.manifest') & (exit /b 1))
-if not exist "%target_dir%" (mkdir "%target_dir%" || ((set ec=%errorlevel%) & (goto end)))
-if exist d.manifest (for /f "delims=" %%a in (d.manifest) do (mkdir "%target_dir%\%%~a" || exit /b))
-for /f "delims=" %%a in (f.manifest) do (copy /b /y "..\%%~a" "%target_dir%\%%~a" 1>nul)
+if not exist "%_gpss_target_dir%" (mkdir "%_gpss_target_dir%" || ((set ec=%errorlevel%) & (goto end)))
+if exist d.manifest (for /f "delims=" %%a in (d.manifest) do (mkdir "%_gpss_target_dir%\%%~a" || exit /b))
+for /f "delims=" %%a in (f.manifest) do (copy /b /y "..\%%~a" "%_gpss_target_dir%\%%~a" 1>nul)
 exit /b 0
 
 :uninstallfiles
 if not exist f.manifest ((>&2 echo error: unable to find file `f.manifest') & (exit /b 1))
-for /f "delims=" %%a in (f.manifest) do (del "%target_dir%\%%~a" 2>nul)
-if exist d.manifest (for /f "delims=" %%a in (d.manifest) do (rmdir "%target_dir%\%%~a" 2>nul))
-if not exist "%target_dir%" (rmdir "%target_dir%" 2>nul)
+for /f "delims=" %%a in (f.manifest) do (del "%_gpss_target_dir%\%%~a" 2>nul)
+if exist d.manifest (for /f "delims=" %%a in (d.manifest) do (rmdir "%_gpss_target_dir%\%%~a" 2>nul))
+if not exist "%_gpss_target_dir%" (rmdir "%_gpss_target_dir%" 2>nul)
 exit /b 0
 
 :help
