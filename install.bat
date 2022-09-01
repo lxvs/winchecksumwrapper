@@ -12,84 +12,24 @@ call:refreshopts
 call:welcomescreen
 choice /c 1234567890UFQWERS /n /m ">       Choose what to do: "
 set choice=%ERRORLEVEL%
-if %choice% EQU 0 (
-    set _exit=1
-    set ec=0
-    goto end
-)
-if %choice% EQU 10 (
-    set _exit=1
-    set ec=0
-    goto end
-)
-if %choice% EQU 1 (
-    call:install
-    goto end
-)
-if %choice% EQU 2 (
-    call:uninstall
-    goto end
-)
-if %choice% EQU 3 (
-    call:toggleopts md2
-    goto welcome
-)
-if %choice% EQU 4 (
-    call:toggleopts md4
-    goto welcome
-)
-if %choice% EQU 5 (
-    call:toggleopts md5
-    goto welcome
-)
-if %choice% EQU 6 (
-    call:toggleopts sha1
-    goto welcome
-)
-if %choice% EQU 7 (
-    call:toggleopts sha256
-    goto welcome
-)
-if %choice% EQU 8 (
-    call:toggleopts sha384
-    goto welcome
-)
-if %choice% EQU 9 (
-    call:toggleopts sha512
-    goto welcome
-)
-if %choice% EQU 11 (
-    call:toggleopts umode
-    goto welcome
-)
-if %choice% EQU 12 (
-    call:toggleopts fmode
-    goto welcome
-)
-if %choice% EQU 13 (
-    if defined qflag (set qflag=) else (set qflag=--copy)
-    call:refreshopts
-    goto welcome
-)
-if %choice% EQU 14 (
-    if "%qflag%" == "--copy" (set qflag=) else (set qflag=--copy)
-    call:refreshopts
-    goto welcome
-)
-if %choice% EQU 15 (
-    if "%qflag%" == "--copy-with-filename" (set qflag=) else (set qflag=--copy-with-filename)
-    call:refreshopts
-    goto welcome
-)
-if %choice% EQU 16 (
-    if "%qflag%" == "--copy-with-path" (set qflag=) else (set qflag=--copy-with-path)
-    call:refreshopts
-    goto welcome
-)
-if %choice% EQU 17 (
-    call:toggleopts sckey
-    goto welcome
-)
+if %choice% EQU 0 ((set _exit=1) & goto end)
+if %choice% EQU 10 ((set _exit=1) & goto end)
+if %choice% EQU 1 (call:install & goto end)
+if %choice% EQU 2 (call:uninstall & goto end)
+if %choice% EQU 3 (call:toggleopts md2 & goto welcome)
+if %choice% EQU 4 (call:toggleopts md4 & goto welcome)
+if %choice% EQU 5 (call:toggleopts md5 & goto welcome)
+if %choice% EQU 6 (call:toggleopts sha1 & goto welcome)
+if %choice% EQU 7 (call:toggleopts sha256 & goto welcome)
+if %choice% EQU 8 (call:toggleopts sha384 & goto welcome)
+if %choice% EQU 9 (call:toggleopts sha512 & goto welcome)
+if %choice% EQU 11 (call:toggleopts umode & goto welcome)
+if %choice% EQU 12 (call:toggleopts fmode & goto welcome)
+if %choice% EQU 13 (if defined qflag (set qflag=) else (set qflag=--copy) & call:refreshopts & goto welcome)
+if %choice% EQU 14 (if "%qflag%" == "--copy" (set qflag=) else (set qflag=--copy) & call:refreshopts & goto welcome)
+if %choice% EQU 15 (if "%qflag%" == "--copy-with-filename" (set qflag=) else (set qflag=--copy-with-filename) & call:refreshopts & goto welcome)
+if %choice% EQU 16 (if "%qflag%" == "--copy-with-path" (set qflag=) else (set qflag=--copy-with-path) & call:refreshopts & goto welcome)
+if %choice% EQU 17 (call:toggleopts sckey & goto welcome)
 goto welcome
 
 :setmetainfo
