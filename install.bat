@@ -159,8 +159,8 @@ cls
 @echo         Installed: %_installed%
 @echo;
 @echo         Operations:
-@echo                 [1] Install
-@echo                 [2] Uninstall
+@echo                 [1] Add below algorithm^(s^) to context menu
+@echo                 [2] Remove all winchecksum items from context menu
 @echo                 [0] Exit
 @echo;
 @echo         Algorithms:
