@@ -7,6 +7,19 @@ call:init
 call:setdefaultopts
 call:checkinstallation
 
+:parseargs
+if %1. == . (goto endparseargs)
+set _exit=1
+if "%~1" == "--uninstall" ((set uninstall=1) & shift /1 & goto parseargs)
+if "%~1" == "--help" (goto help)
+if "%~1" == "/?" (goto help)
+if "%~1" == "-?" (goto help)
+call:err --before-welcome "error: invalid argument `%~1'"
+goto end
+:endparseargs
+
+if defined uninstall (call:uninstall & goto end)
+
 :welcome
 call:refreshopts
 call:welcomescreen
@@ -57,6 +70,7 @@ set ec=0
 set "allalgorithms=MD2 MD4 MD5 SHA1 SHA256 SHA384 SHA512"
 set installing=
 set addingtopath=
+set uninstall=
 exit /b
 ::init
 
@@ -227,6 +241,7 @@ for %%i in (%allalgorithms%) do (
     reg delete "%regpathshell%_%%~i_q" /f 1>nul 2>nul
 )
 if defined installing (exit /b)
+if defined uninstall (call:say --before-welcome "Uninstall complete" & exit /b)
 call:say "Uninstall complete"
 exit /b 0
 ::uninstall
@@ -262,7 +277,12 @@ exit /b
 ::getregparse
 
 :say
-call:welcomescreen
+if "%~1" == "--before-welcome" (
+    echo;
+    shift /1
+) else (
+    call:welcomescreen
+)
 :say_loop
 if "%~1" == "" (
     if %1. == . (exit /b)
@@ -296,6 +316,10 @@ if "%~1" == "" (
 shift /1
 goto err_loop
 ::err
+
+:help
+call:say --before-welcome "usage: install.bat" "   or: install.bat --uninstall"
+goto end
 
 :end
 title %ComSpec%
