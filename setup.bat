@@ -34,7 +34,7 @@ if not defined silent (if exist "%_gpss_path_dir%\%_gpss_exec%" (goto installed)
 :install
 if exist install.pre.cmd (call install.pre.cmd)
 call:installfiles || ((set ec=%errorlevel%) & (goto end))
-call register.cmd || ((set ec=%errorlevel%) & (goto end))
+if not defined _gpss_noreg (call register.cmd || ((set ec=%errorlevel%) & goto end))
 if exist install.post.cmd (call install.post.cmd)
 if exist install.takeover.cmd ((call install.takeover.cmd) & (exit /b))
 if not defined silent (echo Install complete.)
@@ -43,7 +43,7 @@ goto end
 :uninstall
 if exist uninstall.pre.cmd (call uninstall.pre.cmd)
 call:uninstallfiles || ((set ec=%errorlevel%) & (goto end))
-call unregister.cmd || ((set ec=%errorlevel%) & (goto end))
+if not defined _gpss_noreg (call unregister.cmd || ((set ec=%errorlevel%) & goto end))
 if exist uninstall.post.cmd (call uninstall.post.cmd)
 if exist uninstall.takeover.cmd ((call uninstall.takeover.cmd) & (exit /b))
 if not defined silent (echo Uninstall complete.)
