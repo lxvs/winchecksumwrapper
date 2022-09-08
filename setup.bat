@@ -69,7 +69,7 @@ exit /b 0
 if not exist f.manifest ((>&2 echo error: unable to find file `f.manifest') & (exit /b 1))
 for /f "delims=" %%a in (f.manifest) do (del "%_gpss_target_dir%\%%~a" 2>nul)
 if exist d.manifest (for /f "delims=" %%a in (d.manifest) do (rmdir "%_gpss_target_dir%\%%~a" 2>nul))
-if not exist "%_gpss_target_dir%" (rmdir "%_gpss_target_dir%" 2>nul)
+rmdir "%_gpss_target_dir%" 2>nul
 exit /b 0
 
 :help
