@@ -91,12 +91,12 @@ exit /b
 ::setdefaultopts
 
 :checkinstallation
-call:getreg "%regpath%" "path" installation
+call:getreg "%regpath%" "Path" installation
 if not defined installation (exit /b)
-call:getreg "%regpath%" "uppercasemode" umode
-call:getreg "%regpath%" "filemode" fmode
-call:getreg "%regpath%" "copyflag" qflag
-call:getreg "%regpath%" "algorithms" algorithms
+call:getreg "%regpath%" "UpperCaseMode" umode
+call:getreg "%regpath%" "FileMode" fmode
+call:getreg "%regpath%" "CopyFlag" qflag
+call:getreg "%regpath%" "Algorithms" algorithms
 exit /b
 ::checkinstallation
 
@@ -192,11 +192,11 @@ if not defined algorithms (
 )
 set installing=1
 call:uninstall
-reg add "%regpath%" /v "path" /d "%_winchecksum%" /f 1>nul || exit /b 1
-reg add "%regpath%" /v "uppercasemode" /d "%umode%" /f 1>nul || exit /b 1
-reg add "%regpath%" /v "filemode" /d "%fmode%" /f 1>nul || exit /b 1
-reg add "%regpath%" /v "copyflag" /d "%qflag%" /f 1>nul || exit /b 1
-reg add "%regpath%" /v "algorithms" /d "%algorithms%" /f 1>nul || exit /b 1
+reg add "%regpath%" /v "Path" /d "%_winchecksum%" /f 1>nul || exit /b 1
+reg add "%regpath%" /v "UpperCaseMode" /d "%umode%" /f 1>nul || exit /b 1
+reg add "%regpath%" /v "FileMode" /d "%fmode%" /f 1>nul || exit /b 1
+reg add "%regpath%" /v "CopyFlag" /d "%qflag%" /f 1>nul || exit /b 1
+reg add "%regpath%" /v "Algorithms" /d "%algorithms%" /f 1>nul || exit /b 1
 for %%i in (%algorithms%) do (
     reg add "%regpathshell%_%%~i" /ve /d "Winchecksum - %%~i%sck%" /f 1>nul || exit /b 1
     reg add "%regpathshell%_%%~i" /v "icon" /d "%_icon%" /f 1>nul || exit /b 1
